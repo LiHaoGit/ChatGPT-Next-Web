@@ -7,11 +7,10 @@ export function trimTopic(topic: string) {
 }
 
 export async function copyToClipboard(text: string) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).catch((err) => {
-      console.error("Failed to copy: ", err);
-    });
-  } else {
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast(Locale.Copy.Success);
+  } catch (error) {
     const textArea = document.createElement("textarea");
     textArea.value = text;
     document.body.appendChild(textArea);
@@ -19,9 +18,9 @@ export async function copyToClipboard(text: string) {
     textArea.select();
     try {
       document.execCommand("copy");
-      console.log("Text copied to clipboard");
-    } catch (err) {
-      console.error("Failed to copy: ", err);
+      showToast(Locale.Copy.Success);
+    } catch (error) {
+      showToast(Locale.Copy.Failed);
     }
     document.body.removeChild(textArea);
   }
